@@ -11,7 +11,7 @@ import Pagination from '@material-ui/lab/Pagination';
 const CategoryIndex =()=>{
     let history = useHistory();
     const [data, setData] = useState([]);
-    const [name, setName] = useState();
+    const [category, setCategory] = useState();
     const [count, setCount] = useState();
     const GetFile = async () => {
         const currentHref = window.location.href.split('/');
@@ -24,7 +24,7 @@ const CategoryIndex =()=>{
             page = page +1;
         } 
         setCount(page);
-        setName(category);
+        setCategory(category);
     }
 
     const downLoad=async(id)=>{
@@ -47,7 +47,7 @@ const CategoryIndex =()=>{
         GetFile();
     }, []);
     const handleOnchage =  async(event, newPage) => {
-        const resp = await Http.getSth(`/files/results/${name}=${newPage}`);
+        const resp = await Http.getSth(`/files/results/${category}?page=${newPage}`);
         if (resp.data) {
             setData(resp.data.fileModel);
         }

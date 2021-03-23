@@ -52,7 +52,7 @@ const UserIndex = () => {
         GetFile();
     }, []);
     const handleOnchage = async (event, newPage) => {
-        const resp = await Http.getSth(`/files/file/${name}=${newPage}`);
+        const resp = await Http.getSth(`/files/file/${name}?page=${newPage}`);
         if (resp.data) {
             setData(resp.data.fileModel);
         }
