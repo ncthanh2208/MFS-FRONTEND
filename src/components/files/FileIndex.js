@@ -28,7 +28,7 @@ const FileIndex = (props) => {
             alert('You need to log in to download files')
             history.push('/');
         } else {
-            const url = 'http://localhost:9191/files/download/' + id;
+            const url = 'http://localhost:9191/files/'+localStorage.getItem('username')+'/download/' + id;
             window.open(url, "_blank");
         }
     }

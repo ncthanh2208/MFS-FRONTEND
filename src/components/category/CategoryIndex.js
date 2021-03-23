@@ -28,7 +28,7 @@ const CategoryIndex =()=>{
     }
 
     const downLoad=async(id)=>{
-        const url = 'http://localhost:9191/files/download/'+ id;
+        const url = 'http://localhost:9191/files/'+localStorage.getItem('username')+'/download/' + id;
         window.open(url,"_blank");
     }
 
