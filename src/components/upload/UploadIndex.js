@@ -21,10 +21,10 @@ const UpLoadForm = () => {
     const upload = async () => {
         const formData = new FormData();
         formData.append("file", dataFile)
+        formData.append("comment",description.comment)
+        formData.append("category",description.category)
         const resp = await Http.postSth(`files/${localStorage.getItem('username')}`, formData)
-        const url = '/files/'+ resp.data;
-        const response = await Http.putSth(url,description);
-       if(response.statusCode === 200){
+       if(resp.statusCode === 200){
            alert("Upload Successful!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             history.push("/")
        }
