@@ -111,7 +111,6 @@ const GetUser = async () => {
             <Box p={2}>
               <Typography>Are U Sure???????????</Typography>
               <Button onClick={() => handleDelete(id)} >Yes</Button>
-              <Button>No</Button>
             </Box>
           </Popover>
         </div>
