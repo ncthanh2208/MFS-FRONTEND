@@ -5,22 +5,24 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import { Button } from '@material-ui/core';
 import { useHistory } from "react-router-dom";
-import {TextField} from '@material-ui/core';
+import { TextField } from '@material-ui/core';
 import Pagination from '@material-ui/lab/Pagination';
 
 const FileIndex = (props) => {
     let history = useHistory();
     const [data, setData] = useState([]);
     const [count, setCount] = useState();
+    const [page, setPage] = useState(1);
+    const [name, setName] = useState('');
+    const [size, setSize] = useState(0);
     const GetFile = async () => {
         const resp = await Http.getSth('/files?page=1')
         setData(resp.data.fileModel);
-        let page =Math.floor(resp.data.count/6);
-        if(resp.data.count%6 !== 0){
-            page = page +1;
-        } 
+        let page = Math.floor(resp.data.count / 6);
+        if (resp.data.count % 6 !== 0) {
+            page = page + 1;
+        }
         setCount(page);
-
     }
 
     const downLoad = async (id) => {
@@ -28,7 +30,7 @@ const FileIndex = (props) => {
             alert('You need to log in to download files')
             history.push('/');
         } else {
-            const url = 'http://localhost:9191/files/'+localStorage.getItem('username')+'/download/' + id;
+            const url = 'http://localhost:9191/files/' + localStorage.getItem('username') + '/download/' + id;
             window.open(url, "_blank");
         }
     }
@@ -49,7 +51,7 @@ const FileIndex = (props) => {
         setValue({
             ...value,
             [event.target.name]: event.target.value,
-                        
+
         })
     }
     const searchByName = (name) => {
@@ -64,7 +66,7 @@ const FileIndex = (props) => {
         setCategory({
             ...category,
             [event.target.name]: event.target.value,
-                        
+
         })
     }
     const searchByCategory = (category) => {
@@ -74,10 +76,10 @@ const FileIndex = (props) => {
 
     //----------------------------------------------------------------
 
-    const uploadFile =()=>{
-        if(localStorage.getItem('username') === null){
+    const uploadFile = () => {
+        if (localStorage.getItem('username') === null) {
             alert('You need to log in to upload files')
-        }else{
+        } else {
             history.push('/upload')
         }
     }
@@ -105,21 +107,57 @@ const FileIndex = (props) => {
         );
     }
 
-    const handleOnchage =  async(event, newPage) => {
-        const resp = await Http.getSth(`/files?page=${newPage}`);
-        if (resp.data) {
-            setData(resp.data.fileModel );
+    const handleOnchage = async (event, newPage) => {
+        setPage(newPage);
+        if (name || size > 0) {
+            if (name) {
+                const resp = await Http.getSth(`/files/results?name=${value}&page=${page}`);
+                setData(resp?.data?.fileModel)
+            }
+            if (size > 0) {
+                const resp = await Http.getSth(`/files/result?size=${value}&page=${page}`);
+                setData(resp?.data?.fileModel)
+            }
+        } else {
+            const resp = await Http.getSth(`/files?page=${newPage}`);
+            setData(resp?.data?.fileModel);
+        }
+
+    }
+    const handleSearchName = async (event) => {
+        const { value } = event.target;
+        if(value){
+        setName(value);
+        const resp = await Http.getSth(`/files/results?name=${value}&page=${page}`);
+        let page1 = Math.ceil(resp.data.count / 6);
+        setCount(page1);
+        setData(resp?.data?.fileModel)
+        }else{
+            GetFile();
         }
     }
+    const handleSearchSize = async (event) => {
+        const { value } = event.target;
+        if(value > 0){
+        setSize(value);
+        const resp = await Http.getSth(`/files/result?size=${value}&page=${page}`);
+        let page1 = Math.ceil(resp.data.count / 6);
+        setCount(page1);
+        setData(resp?.data?.fileModel)
+        }else{
+            GetFile();
+        }
+    }
+
     return (
         <StyleFileIndex >
             <div className="file-view container-fluid">
                 <div>
-                <Button variant="contained" className="btn-upload" onClick={uploadFile}>UpLoad File</Button>
+                    <Button variant="contained" className="btn-upload" onClick={uploadFile}>UpLoad File</Button>
                 </div>
                 <div className="container-fluid row search-box">
                     <div className="searchByName col-sm">
-                        <TextField id="outlined-basic" label="Search By Name" variant="outlined" onChange={handleOnChage} value={value.uname} name="uname" />
+                        <TextField id="outlined-basic" label="Search By User Name" variant="outlined" onChange={handleOnChage} value={value.uname} name="uname" />
                         <Button className="btn-search" onClick={() => searchByName(value.uname)} >Search</Button>
                     </div>
 
@@ -127,7 +165,15 @@ const FileIndex = (props) => {
                         <TextField id="outlined-basic" label="Search By Category" variant="outlined" onChange={handleOnChageCategory} value={category.category} name="category" />
                         <Button className="btn-search" onClick={() => searchByCategory(category.category)} >Search</Button>
                     </div>
-                    
+
+                    <div className="searchByName col-sm">
+                        <TextField id="outlined-basic" label="Search By Name" variant="outlined" onChange={handleSearchName} />
+                    </div>
+
+                    <div className="searchByName col-sm">
+                        <TextField id="outlined-basic" label="Search By Size" variant="outlined" onChange={handleSearchSize} />
+                    </div>
+
                 </div>
                 <Grid container spacing={1}>
                     <Grid container item xs={12} spacing={2}>
@@ -135,7 +181,7 @@ const FileIndex = (props) => {
                     </Grid>
                 </Grid>
                 <div className="row d-flex justify-content-center mt-5">
-                    <Pagination count={count} onChange={handleOnchage} />
+                    <Pagination count={count} onChange={handleOnchage} page={page} />
                 </div>
             </div>
         </StyleFileIndex>
