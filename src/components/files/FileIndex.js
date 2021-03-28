@@ -15,6 +15,10 @@ const FileIndex = (props) => {
     const [page, setPage] = useState(1);
     const [name, setName] = useState('');
     const [size, setSize] = useState(0);
+    const [val, setVal] = useState({
+        name: '',
+        size: 0
+    });
     const GetFile = async () => {
         const resp = await Http.getSth('/files?page=1')
         setData(resp.data.fileModel);
@@ -110,45 +114,48 @@ const FileIndex = (props) => {
     const handleOnchage = async (event, newPage) => {
         setPage(newPage);
         if (name || size > 0) {
-            if (name) {
-                const resp = await Http.getSth(`/files/results?name=${value}&page=${page}`);
-                setData(resp?.data?.fileModel)
-            }
-            if (size > 0) {
-                const resp = await Http.getSth(`/files/result?size=${value}&page=${page}`);
-                setData(resp?.data?.fileModel)
-            }
+            const resp = await Http.getSth(`/files/results?name=${name}&size=${size}&page=${newPage}`);
+            setData(resp?. data?.fileModel)
         } else {
             const resp = await Http.getSth(`/files?page=${newPage}`);
             setData(resp?.data?.fileModel);
         }
 
     }
+
     const handleSearchName = async (event) => {
-        const { value } = event.target;
-        if(value){
+        let { value } = event.target;
+        if(!value){
+            value = '';
+        }
         setName(value);
-        const resp = await Http.getSth(`/files/results?name=${value}&page=${page}`);
-        let page1 = Math.ceil(resp.data.count / 6);
-        setCount(page1);
-        setData(resp?.data?.fileModel)
-        }else{
+        if (value || size >0) {
+            const resp = await Http.getSth(`/files/results?name=${value}&size=${size}&page=${page}`);
+            let page1 = Math.ceil(resp.data.count / 6);
+            setCount(page1);
+            setData(resp?.data?.fileModel)
+        }
+        else {
             GetFile();
         }
     }
     const handleSearchSize = async (event) => {
-        const { value } = event.target;
-        if(value > 0){
+        let { value } = event.target;
+        if(!value){
+            value = 0;
+        }
         setSize(value);
-        const resp = await Http.getSth(`/files/result?size=${value}&page=${page}`);
-        let page1 = Math.ceil(resp.data.count / 6);
-        setCount(page1);
-        setData(resp?.data?.fileModel)
-        }else{
+        if (value > 0 || name) {
+            const resp = await Http.getSth(`/files/results?name=${name}&size=${value}&page=${page}`);
+            let page1 = Math.ceil(resp.data.count / 6);
+            setCount(page1);
+            setData(resp?.data?.fileModel)
+        }
+        else {
             GetFile();
         }
-    }
 
+    }
     return (
         <StyleFileIndex >
             <div className="file-view container-fluid">
@@ -171,7 +178,7 @@ const FileIndex = (props) => {
                     </div>
 
                     <div className="searchByName col-sm">
-                        <TextField id="outlined-basic" label="Search By Size" variant="outlined" onChange={handleSearchSize} />
+                        <TextField id="outlined-basic" label="Search By Size" variant="outlined" onChange={handleSearchSize} type="number" />
                     </div>
 
                 </div>
