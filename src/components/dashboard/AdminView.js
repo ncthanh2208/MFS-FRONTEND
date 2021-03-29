@@ -48,7 +48,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function AdminView() {
+const AdminView = () => {
 let history = useHistory();
 //------------------------------
     useEffect(() => {
@@ -167,3 +167,6 @@ const GetUser = async () => {
     </Paper>
   );
 }
+
+
+export default AdminView;
