@@ -6,13 +6,14 @@ import TextField from '@material-ui/core/TextField';
 import Http from '../../http/apiService';
 const UpLoadForm = () => {
     let history = useHistory();
-    const [description, setValue] = useState({
+    const [description, setDescription] = useState({
         category: '',
         comment: '',
     });
+
     const [dataFile, setDataFile] = useState();
     const handleOnChage = (event) => {
-        setValue({
+        setDescription({
             ...description,
             [event.target.name]: event.target.value,
         })
