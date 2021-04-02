@@ -58,7 +58,7 @@ const SignInButton = () => {
             <form className={classes.root} noValidate autoComplete="off">
                 <span>Sign In</span>
                 <TextField id="outlined-basic" label="Username" variant="outlined" onChange={handleOnChage} value={value.username} name="username" />
-                <TextField id="outlined-basic" label="Password" variant="outlined" onChange={handleOnChage} value={value.password} name="password" />
+                <TextField id="outlined-basic" label="Password" type="password" variant="outlined" onChange={handleOnChage} value={value.password} name="password" />
                 <Button className="btn-signin" onClick={handleSignin}>Sign in</Button>
             </form>
         </StyleSignIn>
